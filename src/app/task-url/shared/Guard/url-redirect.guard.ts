@@ -1,43 +1,48 @@
 import { Injectable } from '@angular/core';
-import { CanActivateFn,CanActivate, Router } from '@angular/router';
+import { CanActivateFn,CanActivate, Router, ActivatedRoute } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
  export class urlRedirectGuard implements CanActivate  {
-  constructor(private router: Router) { }
+  shouldContinue = true;
 
+  constructor(private router: Router) {}
+ 
   canActivate(){
-    // get params from url 
+    
     let urlParams = new URLSearchParams(window.location.search);
     let paramsPage= urlParams.get("page");
-    console.log("1");
     
-    if(paramsPage == 'condition' && urlParams.has("ArtifactID"))
-    {
-      this.router.navigateByUrl("edit-condition?"+urlParams);
-      console.log("2");
-      return false;
-    }else if(paramsPage == 'condition' && !urlParams.has("ArtifactID"))
-    {
-      this.router.navigateByUrl("new-condition?"+urlParams);
-      console.log("3");
-      return false;
-    }
+    let allParamas = "?"+location.href.split('?')[1];
 
-    if (paramsPage == 'logic' && urlParams.has("ArtifactID"))
-    {
-      this.router.navigateByUrl("edit-logic?"+urlParams);
-      console.log("4");
-      return false;
-    }else if(paramsPage == 'logic' && !urlParams.has("ArtifactID"))
-    {
-      this.router.navigateByUrl("new-logic?"+urlParams);
-      console.log("5");
-      return false;
+    if(this.shouldContinue){
+      if(paramsPage == 'condition' && urlParams.has("ArtifactID"))
+        {
+          this.router.navigateByUrl("edit-condition"+allParamas);
+          this.shouldContinue= false
+          return true;
+        }else if(paramsPage == 'condition' && !urlParams.has("ArtifactID"))
+        {
+          this.router.navigateByUrl("new-condition"+allParamas);
+          this.shouldContinue= false
+          return true;
+        }
+    
+        if (paramsPage == 'logic' && urlParams.has("ArtifactID"))
+        {
+          this.router.navigateByUrl("edit-logic"+allParamas)
+          this.shouldContinue= false
+          return true;
+        }else if(paramsPage == 'logic' && !urlParams.has("ArtifactID"))
+        {
+          this.router.navigateByUrl("new-logic"+allParamas);
+          this.shouldContinue= false
+          return true;
+        }
+        return true;
+      }
+      return true;
     }
-    console.log("6");
-    return false;
-  }
-  
+    
 };
